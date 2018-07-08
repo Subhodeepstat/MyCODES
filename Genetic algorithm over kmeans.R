@@ -80,9 +80,11 @@ selection<-function(data,ps=ps){
 
 #######cross over function#########
 do_crossover<-function(data,i,index){
-  
+  #i=5
   length<-ncol(data)
-  cut<-sample(1:length,1)
+  #cut<-12
+  cut<-sample(1:(length-1),1)
+  #cat("Cut: ",cut,"\n")
   parent1<-data[index[i],]
   parent2<-data[index[i+1],]
   genesChild1<-c(parent1[1:cut],parent2[(cut+1):length])
@@ -98,10 +100,9 @@ do_crossover<-function(data,i,index){
 
 
 
-
 cross_over_func<-function(data,pc){
-index<-sample(1:(numofInd)-1,as.integer(pc*numofInd))
-
+index<-sample(1:((numofInd)),as.integer(pc*numofInd))
+#cat("Index: ",index,"\n")
 s<-seq(1,as.integer(length(index)/2),2)
 
 for(j in s){
@@ -113,9 +114,11 @@ return(data)
 }
 
 
+
 #########Mutation Function###############
 
 do_Mutation<-function(chrm_before_mut,chrm_after_mut,flag_mutation,fitness_list,i){
+  #chrm_before_mut<-generation3[2,]
   length<-length(chrm_before_mut)
   dice<-NULL
   chrm_new<-NULL
@@ -124,11 +127,12 @@ do_Mutation<-function(chrm_before_mut,chrm_after_mut,flag_mutation,fitness_list,
   
   
   for(j in 1:length){
+    #j=1
     
     dice[j]<-runif(1,0,1)
     
     if(dice[j]>pm){
-      chrm_new[j]<-chrm_before_mut[j,];gene_flag[j]<-0
+      chrm_new[j]<-chrm_before_mut[j];gene_flag[j]<-0
       
     }else{
       chrm_new[j]<-runif(1,0,1);gene_flag[j]<-1
@@ -157,7 +161,7 @@ do_Mutation<-function(chrm_before_mut,chrm_after_mut,flag_mutation,fitness_list,
 
 
 Mutation_func<-function(data,pm){
-#data<-generation3
+data<-generation3
 fitness_list<-fitness_f_rep(data)
 flag_mutation<-rep(0,nrow(data))
 chrm_after_mut<-NULL
@@ -169,6 +173,7 @@ for(i in 1:numofInd){
   }else{
     chrm_after_mut<-do_Mutation(data[i,],chrm_after_mut,flag_mutation,fitness_list,i)
   }
+  #cat(i,"done\n")
 }
 
 chrm_after_mut<-sort_func(chrm_after_mut)
@@ -195,44 +200,6 @@ genetic_kmeans<-function(data,ps,pc,pm){
 
 generation1<-sort_func(generation)
 generation2<-selection(generation1,ps)
-
-do_crossover<-function(data,i,index){
-  
-  length<-ncol(data)
-  cut<-sample(1:length,1)
-  parent1<-data[index[i],]
-  parent2<-data[index[i+1],]
-  genesChild1<-c(parent1[1:cut],parent2[(cut+1):length])
-  genesChild2<-c(parent1[(cut+1):length],parent2[1:cut])
-  dat_new<-rbind(parent1,parent2,genesChild1,genesChild2)
-  
-  dat_new<-sort_func(dat_new)
-  
-  data[index[i],]<-dat_new[1,]
-  data[index[i+1],]<-dat_new[2,]
-  return(data)
-}
-
-
-
-
-cross_over_func<-function(data,pc){
-  data<-generation2
-  index<-sample(1:(numofInd)-1,as.integer(pc*numofInd))
-  
-  s<-seq(1,as.integer(length(index)/2),2)
-  
-  for(j in s){
-    data<-do_crossover(data,j,index)
-    #cat(j,"\n")
-  }
-  data<-sort_func(data)
-  return(data)
-}
-
-
-
-
 generation3<-cross_over_func(generation2,pc)
 generation4<-Mutation_func(generation3)
 
@@ -240,8 +207,51 @@ generation4<-Mutation_func(generation3)
 
 generation5<-sort_func(generation4)
 generation6<-selection(generation5,ps)
-generation7<-selection(generation6,pc)
-generation8<-Mutation_func(generation3)
+generation7<-cross_over_func(generation6,pc)
+generation8<-Mutation_func(generation7,pm)
+
+
+####iter-3
+generation9<-sort_func(generation8)
+generation10<-selection(generation9,ps)
+generation11<-cross_over_func(generation10,pc)
+generation12<-Mutation_func(generation11,pm)
+
+#####iter-4
+generation13<-sort_func(generation12)
+generation14<-selection(generation13,ps)
+generation15<-cross_over_func(generation14,pc)
+generation16<-Mutation_func(generation15,pm)
+
+#####iter-5
+generation17<-sort_func(generation16)
+generation18<-selection(generation17,ps)
+generation19<-cross_over_func(generation18,pc)
+generation20<-Mutation_func(generation19,pm)
+
+
+#####iter-5
+generation21<-sort_func(generation20)
+generation22<-selection(generation21,ps)
+generation23<-cross_over_func(generation22,pc)
+generation24<-Mutation_func(generation23,pm)
+
+
+#####iter-6
+generation25<-sort_func(generation24)
+generation26<-selection(generation25,ps)
+generation27<-cross_over_func(generation26,pc)
+generation28<-Mutation_func(generation27,pm)
+
+
+#####iter-6
+generation29<-sort_func(generation28)
+generation30<-selection(generation29,ps)
+generation31<-cross_over_func(generation30,pc)
+generation32<-Mutation_func(generation127,pm)
+
+
+
 
 
 #####initialising the popilation############
